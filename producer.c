@@ -2,78 +2,52 @@
 // 10/21/22
 // Producer Process
 
-//#include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
-#include <pthread.h>
-#include <semaphore.h>
-#include <unistd.h> // allows use of sleep() in linux
-//#include "shared.hpp"
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/types.h>
+#include "shared.h"
 
-#define THREAD_NUM 2
+int main() { 
+    // Random Number Generator
+    time_t t;   
+    srand(time(&t));
 
-sem_t notEmpty, notFull;
-int items = 0;
-int buffer[2];
+    // Create shared memory object and set its size to the size of our structure. 
+    char * shmpath = "/&";
+    int fd = shm_open(shmpath, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
 
+    if (fd == -1) errExit("shm_open");
+    if (ftruncate(fd, sizeof(struct shmbuf)) == -1) errExit("ftruncate");
 
-void *producer(void *arg) {
-    while(1) {
-        // produce
-        int x = rand() % 100;
-        // add to buffer
-        sem_wait(&notFull); // sem_wait or wait()
-        buffer[items] = x;
-        items++;
-        printf("Producer Produces item: \n");
-        sem_post(&notEmpty); // sem_post or signal()
-    }
-}
-void* consumer(void * arg) {
-    while(1) {
-        int y;
-
-        // Remove from buffer
-        sem_wait(&notEmpty);
-        y = buffer[items - 1];
-        items--;
-        printf("Consumer Consumes item: ");
-        sem_post(&notFull);
-
-        // Consume
-        printf("%d\n", y);
-        sleep(5);
-    }
-}
-
-//int main(int argc, char* argv[]) {
-int main() {   
-    pthread_t th[THREAD_NUM];
+    // Map the object into the caller's address space.
+    struct shmbuf *shmp = mmap(NULL, sizeof(struct shmbuf), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (shmp == MAP_FAILED) errExit("mmap");
 
     // semaphore initialization
-    sem_init(&notEmpty, 0, 0);
-    sem_init(&notFull, 0, 2);
+    if (sem_init(&shmp->notEmpty, 0, 0) == -1) errExit("sem_init-notEmpty");
+    if (sem_init(&shmp->notFull, 0, 2) == -1) errExit("sem_init-notFull");
 
-    for (int i = 0; i < THREAD_NUM; i++) {
-        if(i % 2 == 0) {
-            if(pthread_create(&th[i], NULL, &producer, NULL) != 0) {
-                perror("failed to create Thread");
-            }
-        } else {
-            if (pthread_create(&th[i], NULL, &consumer, NULL) != 0) {
-                perror("Failed to Create Thread");
-            }
-        }
+    if (sem_wait(&shmp->notFull) == -1) // sem_wait or wait(). Waits until buffer is not Full.
+        errExit("sem_wait");
+
+    shmp->cnt = 0;
+    printf("\n");
+
+    // for loop produces 2 numbers and copies it to Shared memory Object
+    for (int o = 0; o < BUF_SIZE; ++o) { 
+        // produce
+        int x = rand() % 100;
+        int * ptr = &x;
+        // add to buffer and copy it to the shared memory object
+        shmp->buffer[o] = x;
+        shmp->cnt = o;
+        int z = o + 1;
+        int * ptr2 = &z;
+
+        memcpy(&shmp->buffer[o], ptr, 1); 
+        memcpy(&shmp->cnt, ptr2, 1);
+        printf("Producer Produces item: %d\n", shmp->buffer[o]);
     }
-    for (int i = 0; i < THREAD_NUM; i++) {
-        if(pthread_join(th[i], NULL) != 0) {
-            perror("Failed to join thread");
-        }
-    }
-    sem_destroy(&notEmpty);
-    sem_destroy(&notFull);
-    return 0;
+
+    if (sem_post(&shmp->notEmpty) == -1) // sem_post or signal(). Signals that the buffer is not Empty to Consumer Process.
+        errExit("sem_post");
+
+    exit(EXIT_SUCCESS);
 }
