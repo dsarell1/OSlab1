@@ -8,4 +8,6 @@
 
   In my program, the Producer will generate 2 random numbers (between 0 and 99), and store them into the buffer inside a shared memory structure. First the program opens the shared memory with shm_open() and then maps a structure to the structure within shared memory. I initalize the semaphores notEmpty and notFull to 0 and 2, respectifully. Before the crit section I make sure that the structure is not full, using sem_wait(). I then make a for loop where it will generate the 2 random numbers and using memcpy(), the program copies the numbers into the integer array called buffer in the shared memory. After the foor loop I signal the consumer process that the buffer is notEmpty using sem_post().
 
-  In my Program, the Consumer will output the 2 randomly generated numbers by the producer, waiting 2 seconds before each output. 
+  In my Program, the Consumer will output the 2 randomly generated numbers by the producer, waiting 2 seconds before each output. First the program proceeds to do the same thing by opening the same shared memory object and mapping another structure to that structure in shared memory. Before the critical section I check to see if the buffer is notEmpty using sem_wait(). I then use a for loop to output the numbers in shared memory. After the for loop I signal that the buffer is notFull using sem_post().
+  
+  
