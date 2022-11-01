@@ -24,3 +24,5 @@
 
 ![producer c - dsarell1  SSH_ wasp cs kent edu  - Visual Studio Code 11_1_2022 4_25_24 PM (2)](https://user-images.githubusercontent.com/116117025/199334935-70f80032-d36f-4a3b-8b15-d4425f1c91f9.png)
 
+![producer c - dsarell1  SSH_ wasp cs kent edu  - Visual Studio Code 11_1_2022 4_37_03 PM (2)](https://user-images.githubusercontent.com/116117025/199336316-3ad19bc7-4823-440a-ac06-ddc7520ed902.png)
+
