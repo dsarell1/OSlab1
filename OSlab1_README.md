@@ -11,8 +11,11 @@
   In my Program, the Consumer will output the 2 randomly generated numbers by the producer, waiting 2 seconds before each output. First the program proceeds to do the same thing by opening the same shared memory object and mapping another structure to that structure in shared memory. Before the critical section I check to see if the buffer is notEmpty using sem_wait(). I then use a for loop to output the numbers in shared memory. After the for loop I signal that the buffer is notFull using sem_post().
   
   Using the following commands allows you to run my Program:
+  
   gcc producer.c -pthread -lrt -o producer
+  
   gcc consumer.c -pthread -lrt -o consumer
+  
   ./producer & ./consumer &
   
   # Here are some Examples of the code:
