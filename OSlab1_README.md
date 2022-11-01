@@ -4,7 +4,7 @@
   
   Below is my shared memory sturcture where it has 2 semaphores notEmpty (checks for buffer is not empty) and notFull (checks if buffer is not full). Cnt is the number of integers currently in the buffer. The buffer or "Table" is where the data is being stored. BUF_SIZE = 2 for there are only 2 integers in the table at one time.
 
-![shared h - dsarell1  SSH_ wasp cs kent edu  - Visual Studio Code 10_31_2022 12_46_58 PM](https://user-images.githubusercontent.com/116117025/199062920-e0614c5e-47dd-4d86-9618-cc444955ba3b.png)
+![shared h - dsarell1  SSH_ wasp cs kent edu  - Visual Studio Code 10_31_2022 12_46_58 PM](https://user-images.githubusercontent.com/116117025/199334828-3e7e4348-0da3-4ac9-adcb-063270b43612.png)
 
   In my program, the Producer will generate 2 random numbers (between 0 and 99), and store them into the buffer inside a shared memory structure. First the program opens the shared memory with shm_open() and then maps a structure to the structure within shared memory using mmap(). I initalize the semaphores notEmpty and notFull to 0 and 2, respectifully. Before the crit section I make sure that the structure is not full, using sem_wait(). I then make a for loop where it will generate the 2 random numbers and using memcpy(), the program copies the numbers into the integer array called buffer in the shared memory. After the for loop I signal the consumer process that the buffer is notEmpty using sem_post().
 
@@ -16,6 +16,8 @@
   ./producer & ./consumer &
   
   # Here are some Examples of the code:
-![consumer c - dsarell1  SSH_ wasp cs kent edu  - Visual Studio Code 11_1_2022 4_22_40 PM](https://user-images.githubusercontent.com/116117025/199333673-57c322d2-a1ab-4d36-ab5b-1bc8298a4a47.png)
+  
+![consumer c - dsarell1  SSH_ wasp cs kent edu  - Visual Studio Code 11_1_2022 4_22_40 PM (2)](https://user-images.githubusercontent.com/116117025/199334889-a66a05e6-75e4-49ee-8ced-1797882ce7f5.png)
 
-![producer c - dsarell1  SSH_ wasp cs kent edu  - Visual Studio Code 11_1_2022 4_25_24 PM](https://user-images.githubusercontent.com/116117025/199333997-3b940481-86b6-4e17-a28a-07a383ba4deb.png)
+![producer c - dsarell1  SSH_ wasp cs kent edu  - Visual Studio Code 11_1_2022 4_25_24 PM (2)](https://user-images.githubusercontent.com/116117025/199334935-70f80032-d36f-4a3b-8b15-d4425f1c91f9.png)
+
