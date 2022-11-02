@@ -1,4 +1,4 @@
-# OSlab1 -- Dylan Sarell -- 10/31/22
+# OSlab1 -- Producer Consumer Problem -- Dylan Sarell -- 10/31/22
 
   For my First operating Systems Lab, it was inherrantly difficult. I have put numerous hours into this Assignment throughout the past week and there was so much new code that I have not seen before. To be honest I am still not sure if I have the Program fully working, but I got it to output something. In this assigment the Job was to create a program invloving the Producer Consumer Problem. It was to create two separate processes, a producer and a consumer, connecting them with shared memory. You were also to use semaphores to syncronize both processes so that way the producer or consumer don't enter their critical sections at the same time; to make sure each process is syncronized. The producer's job is to input data in a buffer (Via shared memory), and the consumer's job is to output the numbers, remove them from memory.
   
